@@ -13,17 +13,40 @@ let
     "14" = "sha256-+G+/RQzOttl9oLrEIosFcV7+zmaEiiwBLmHVHSl6350=";
     "13" = "sha256-ihAYU/H122bBx0NwDsdfcmdS++K32qxd/G0y1q9GY38=";
     "12" = "sha256-z71Saqh6stiVB7ICvvM18GaA+E8tgcVFdFNs+uk71/4=";
+    "11" = "sha256-SixtYTYaozENm2KCsNCY/qLZk8b9v5mDocrnVuKkHIY=";
+  };
+
+  releaseConfig = if androidVersion == "11" then "eng" else "aosp_current";
+
+  variantLookup = {
+    "11" = "RP1A";
+    "12" = "SP1A";
+    "13" = "TP1A";
+    "14" = "UP1A";
+    "15" = "eng";
+    "16" = "eng";
   };
 
   projectsLookup = {
-    "16" = [ "platform/build/release" ];
+    "16" = [
+      "external/starlark-go"
+      "platform/build/release"
+    ];
     "15" = [
+      "external/starlark-go"
       "platform/prebuilts/bazel/common"
       "platform/build/release"
     ];
-    "14" = [ "platform/prebuilts/bazel/common" ];
-    "13" = [ ];
-    "12" = [ ];
+    "14" = [
+      "external/starlark-go"
+      "platform/prebuilts/bazel/common"
+    ];
+    "13" = [ "external/starlark-go" ];
+    "12" = [ "external/starlark-go" ];
+    "11" = [
+      "platform/prebuilts/vndk/v28"
+      "platform/prebuilts/vndk/v29"
+    ];
   };
 
   archLookup = {
@@ -73,7 +96,6 @@ stdenv.mkDerivation {
       "build/blueprint"
       "build/soong"
       "external/golang-protobuf"
-      "external/starlark-go"
 
       # What we actually want to compile
       "platform/sdk"
@@ -114,16 +136,7 @@ stdenv.mkDerivation {
 
   configurePhase = ''
     . build/envsetup.sh
-
-    if ((${androidVersion} == 12)); then
-      lunch aosp_arm64-aosp_current-SP1A
-    elif ((${androidVersion} == 13)); then
-      lunch aosp_arm64-aosp_current-TP1A
-    elif ((${androidVersion} == 14)); then
-      lunch aosp_arm64-aosp_current-UP1A
-    else 
-      lunch aosp_arm64-aosp_current-eng
-    fi
+    lunch aosp_arm64-${releaseConfig}-${variantLookup.${androidVersion}}
   '';
 
   buildPhase = ''
