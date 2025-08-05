@@ -64,13 +64,16 @@ stdenv.mkDerivation {
     ];
   };
 
-  patchPhase = ''
+  patches = [
+    ./patches/0001-add-arm-host-arch.patch
+  ];
+
+  postPatch = ''
     patchShebangs ./build
 
     substituteInPlace ./build/envsetup.sh --replace-fail complete :
     substituteInPlace ./build/envsetup.sh --replace-fail /bin/pwd $(which pwd)
     substituteInPlace ./build/make/shell_utils.sh --replace-fail /bin/pwd $(which pwd)
-
     substituteInPlace ./build/make/common/core.mk --replace-fail /bin/bash $(which bash)
 
     # Symlink the Nix packaged versions of prebuilts, to allow for aarch64 builds.
