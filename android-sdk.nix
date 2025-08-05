@@ -66,11 +66,8 @@ let
       "darwin-x86";
 
   katiPkg = pkgs.kati;
-  goPkg = pkgs.go.overrideAttrs {
-    # The prebuilt Go toolchain is built with this option, which precompiles the standard library.
-    GODEBUG = "installgoroot=all";
-    preInstall = '''';
-  };
+  goPkg = callPackage ./rebuilts/go.nix { };
+  ninjaPkg = callPackage ./rebuilts/ninja.nix { };
 
   fetchWithRepo = callPackage ./fetchWithRepo.nix { };
 in
@@ -83,6 +80,7 @@ stdenv.mkDerivation {
     goPkg
     which
     katiPkg
+    ninjaPkg
     writableTmpDirAsHomeHook
   ];
 
@@ -132,6 +130,7 @@ stdenv.mkDerivation {
     mkdir -p ./prebuilts/build-tools/${archFolder}/bin/
     ln -s ${goPkg}/share/go ./prebuilts/go/${archFolder}
     ln -s ${katiPkg}/bin/ckati ./prebuilts/build-tools/${archFolder}/bin/ckati
+    ln -s ${ninjaPkg}/bin/ninja ./prebuilts/build-tools/${archFolder}/bin/ninja
   '';
 
   configurePhase = ''
@@ -140,6 +139,7 @@ stdenv.mkDerivation {
   '';
 
   buildPhase = ''
+    export TEMPORARY_DISABLE_PATH_RESTRICTIONS=1
     make sdk
   '';
 }
