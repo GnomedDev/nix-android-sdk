@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   stdenv,
   callPackage,
@@ -6,7 +7,25 @@
 
 let
   fetchWithRepo = callPackage ./fetchWithRepo.nix { };
-  sdkVersion = "-latest";
+  androidVersion = "16";
+  androidSubversion = "s2";
+  fullVersion = "${androidVersion}-${androidSubversion}";
+
+  archLookup = {
+    "aarch64-linux" = "linux-arm64";
+    "x86_64-linux" = "linux-x86";
+    "aarch64-darwin" = "darwin-arm64";
+    "x86_64-darwin" = "darwin-x86";
+  };
+
+  archFolder =
+    if lib.strings.toInt androidVersion > 15 then
+      archLookup.${stdenv.buildPlatform.system}
+    # Android before 16 has no support for aarch64-linux, so we need to put our builds in the `linux-x86` folder.
+    else if lib.strings.hasSuffix "linux" stdenv.buildPlatform then
+      "linux-x86"
+    else
+      "darwin-x86";
 
   katiPkg = pkgs.kati;
   goPkg = pkgs.go.overrideAttrs {
@@ -17,7 +36,7 @@ let
 in
 stdenv.mkDerivation {
   name = "androidsdk";
-  version = sdkVersion;
+  version = fullVersion;
 
   nativeBuildInputs = with pkgs; [
     ps
@@ -29,8 +48,8 @@ stdenv.mkDerivation {
 
   src = fetchWithRepo {
     manifestUrl = "https://android.googlesource.com/platform/manifest";
-    outputHash = "sha256-z+UTBGNWbofvxEnbhaAjh3iTDU1UmXDmCxpzXUSnJl0=";
-    manifestBranch = "android${sdkVersion}-release";
+    outputHash = "sha256-ETuszUWCInIAMNbYiNBqgEFzEDvftkyI+oAJ2mQ+KwA=";
+    manifestBranch = "android${fullVersion}-release";
     projects = [
       # Absolutely necessary for configuring.
       "platform/build"
@@ -56,9 +75,9 @@ stdenv.mkDerivation {
 
     # Symlink the Nix packaged versions of prebuilts, to allow for aarch64 builds.
     mkdir -p ./prebuilts/go/
-    mkdir -p ./prebuilts/build-tools/linux-x86/bin/
-    ln -s ${goPkg}/share/go ./prebuilts/go/linux-x86
-    ln -s ${katiPkg}/bin/ckati ./prebuilts/build-tools/linux-x86/bin/ckati
+    mkdir -p ./prebuilts/build-tools/${archFolder}/bin/
+    ln -s ${goPkg}/share/go ./prebuilts/go/${archFolder}
+    ln -s ${katiPkg}/bin/ckati ./prebuilts/build-tools/${archFolder}/bin/ckati
   '';
 
   configurePhase = ''
