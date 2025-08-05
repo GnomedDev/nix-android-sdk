@@ -6,10 +6,25 @@
 }:
 
 let
-  fetchWithRepo = callPackage ./fetchWithRepo.nix { };
   androidVersion = "16";
-  androidSubversion = "s2";
-  fullVersion = "${androidVersion}-${androidSubversion}";
+  hashLookup = {
+    "16" = "sha256-z+UTBGNWbofvxEnbhaAjh3iTDU1UmXDmCxpzXUSnJl0=";
+    "15" = "sha256-chjqREDvDAvHEGQTg5+iOeASjJ1b49esS0JVgwZ3ugQ=";
+    "14" = "sha256-+G+/RQzOttl9oLrEIosFcV7+zmaEiiwBLmHVHSl6350=";
+    "13" = "sha256-ihAYU/H122bBx0NwDsdfcmdS++K32qxd/G0y1q9GY38=";
+    "12" = "sha256-z71Saqh6stiVB7ICvvM18GaA+E8tgcVFdFNs+uk71/4=";
+  };
+
+  projectsLookup = {
+    "16" = [ "platform/build/release" ];
+    "15" = [
+      "platform/prebuilts/bazel/common"
+      "platform/build/release"
+    ];
+    "14" = [ "platform/prebuilts/bazel/common" ];
+    "13" = [ ];
+    "12" = [ ];
+  };
 
   archLookup = {
     "aarch64-linux" = "linux-arm64";
@@ -22,7 +37,7 @@ let
     if lib.strings.toInt androidVersion > 15 then
       archLookup.${stdenv.buildPlatform.system}
     # Android before 16 has no support for aarch64-linux, so we need to put our builds in the `linux-x86` folder.
-    else if lib.strings.hasSuffix "linux" stdenv.buildPlatform then
+    else if lib.strings.hasSuffix "linux" stdenv.buildPlatform.system then
       "linux-x86"
     else
       "darwin-x86";
@@ -33,10 +48,12 @@ let
     GODEBUG = "installgoroot=all";
     preInstall = '''';
   };
+
+  fetchWithRepo = callPackage ./fetchWithRepo.nix { };
 in
 stdenv.mkDerivation {
   name = "androidsdk";
-  version = fullVersion;
+  version = androidVersion;
 
   nativeBuildInputs = with pkgs; [
     ps
@@ -48,12 +65,11 @@ stdenv.mkDerivation {
 
   src = fetchWithRepo {
     manifestUrl = "https://android.googlesource.com/platform/manifest";
-    outputHash = "sha256-ETuszUWCInIAMNbYiNBqgEFzEDvftkyI+oAJ2mQ+KwA=";
-    manifestBranch = "android${fullVersion}-release";
+    manifestBranch = "android${androidVersion}-release";
+    outputHash = hashLookup.${androidVersion};
     projects = [
       # Absolutely necessary for configuring.
       "platform/build"
-      "platform/build/release"
       "build/blueprint"
       "build/soong"
       "external/golang-protobuf"
@@ -61,11 +77,13 @@ stdenv.mkDerivation {
 
       # What we actually want to compile
       "platform/sdk"
-    ];
+    ]
+    ++ projectsLookup.${androidVersion};
   };
 
   patches = [
     ./patches/0001-add-arm-host-arch.patch
+    ./patches/0002-add-arm-combo-mk.patch
   ];
 
   postPatch = ''
@@ -73,8 +91,19 @@ stdenv.mkDerivation {
 
     substituteInPlace ./build/envsetup.sh --replace-fail complete :
     substituteInPlace ./build/envsetup.sh --replace-fail /bin/pwd $(which pwd)
-    substituteInPlace ./build/make/shell_utils.sh --replace-fail /bin/pwd $(which pwd)
     substituteInPlace ./build/make/common/core.mk --replace-fail /bin/bash $(which bash)
+    substituteInPlace ./build/core/product_config.mk --replace-fail "| sed" "| $(which sed)"
+
+    if ((${androidVersion} > 13)); then
+      substituteInPlace ./build/make/shell_utils.sh --replace-fail /bin/pwd $(which pwd)
+    else
+      substituteInPlace ./build/soong/soong_ui.bash --replace-fail /bin/pwd $(which pwd)
+    fi
+
+    if ((${androidVersion} < 15)); then
+      substituteInPlace ./build/make/core/config.mk --replace-fail uname $(which uname)
+      substituteInPlace ./build/make/core/config.mk --replace-fail date $(which date)
+    fi
 
     # Symlink the Nix packaged versions of prebuilts, to allow for aarch64 builds.
     mkdir -p ./prebuilts/go/
@@ -85,7 +114,16 @@ stdenv.mkDerivation {
 
   configurePhase = ''
     . build/envsetup.sh
-    lunch aosp_arm64-aosp_current-eng
+
+    if ((${androidVersion} == 12)); then
+      lunch aosp_arm64-aosp_current-SP1A
+    elif ((${androidVersion} == 13)); then
+      lunch aosp_arm64-aosp_current-TP1A
+    elif ((${androidVersion} == 14)); then
+      lunch aosp_arm64-aosp_current-UP1A
+    else 
+      lunch aosp_arm64-aosp_current-eng
+    fi
   '';
 
   buildPhase = ''

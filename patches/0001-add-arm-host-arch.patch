@@ -1,5 +1,4 @@
 diff --git a/build/make/core/envsetup.mk b/build/make/core/envsetup.mk
-index f82e861..5cd538d 100644
 --- a/build/make/core/envsetup.mk
 +++ b/build/make/core/envsetup.mk
 @@ -177,10 +177,16 @@ ifneq (,$(findstring x86_64,$(UNAME)))

@@ -1,0 +1,28 @@
+diff --git a/build/make/core/combo/HOST_darwin-aarch64.mk b/build/make/core/combo/HOST_darwin-aarch64.mk
+new file mode 120000
+--- /dev/null
++++ b/build/make/core/combo/HOST_darwin-aarch64.mk
+@@ -0,0 +1 @@
++./HOST_darwin-x86.mk
+\ No newline at end of file
+diff --git a/build/make/core/combo/HOST_darwin-arm.mk b/build/make/core/combo/HOST_darwin-arm.mk
+new file mode 120000
+--- /dev/null
++++ b/build/make/core/combo/HOST_darwin-arm.mk
+@@ -0,0 +1 @@
++./HOST_darwin-x86.mk
+\ No newline at end of file
+diff --git a/build/make/core/combo/HOST_linux-aarch64.mk b/build/make/core/combo/HOST_linux-aarch64.mk
+new file mode 120000
+--- /dev/null
++++ b/build/make/core/combo/HOST_linux-aarch64.mk
+@@ -0,0 +1 @@
++./HOST_linux-x86.mk
+\ No newline at end of file
+diff --git a/build/make/core/combo/HOST_linux-arm.mk b/build/make/core/combo/HOST_linux-arm.mk
+new file mode 120000
+--- /dev/null
++++ b/build/make/core/combo/HOST_linux-arm.mk
+@@ -0,0 +1 @@
++./HOST_linux-x86.mk
+\ No newline at end of file
