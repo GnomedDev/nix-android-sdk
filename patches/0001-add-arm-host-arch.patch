@@ -6,7 +6,7 @@ diff --git a/build/make/core/envsetup.mk b/build/make/core/envsetup.mk
    HOST_IS_64_BIT := true
  else
 +ifneq (,$(findstring aarch64,$(UNAME)))
-+  HOST_ARCH := aarch64
++  HOST_ARCH := arm64
 +  HOST_2ND_ARCH := arm
 +  HOST_IS_64_BIT := true
 +else
