@@ -1,0 +1,20 @@
+diff --git a/build/soong/cc/libbuildversion/tests/Android.bp b/build/soong/cc/libbuildversion/tests/Android.bp
+--- a/build/soong/cc/libbuildversion/tests/Android.bp
++++ b/build/soong/cc/libbuildversion/tests/Android.bp
+@@ -41,6 +41,16 @@ cc_defaults {
+                 dir: "host/",
+             },
+         },
++        linux_glibc_arm: {
++            dist: {
++                dir: "host32/",
++            },
++        },
++        linux_glibc_arm64: {
++            dist: {
++                dir: "host/",
++            },
++        },
+         windows: {
+             enabled: true,
+         },
