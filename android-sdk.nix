@@ -6,48 +6,56 @@
 }:
 
 let
-  androidVersion = "16";
-  hashLookup = {
-    "16" = "sha256-z+UTBGNWbofvxEnbhaAjh3iTDU1UmXDmCxpzXUSnJl0=";
-    "15" = "sha256-chjqREDvDAvHEGQTg5+iOeASjJ1b49esS0JVgwZ3ugQ=";
-    "14" = "sha256-+G+/RQzOttl9oLrEIosFcV7+zmaEiiwBLmHVHSl6350=";
-    "13" = "sha256-ihAYU/H122bBx0NwDsdfcmdS++K32qxd/G0y1q9GY38=";
-    "12" = "sha256-z71Saqh6stiVB7ICvvM18GaA+E8tgcVFdFNs+uk71/4=";
-    "11" = "sha256-SixtYTYaozENm2KCsNCY/qLZk8b9v5mDocrnVuKkHIY=";
+  androidVersion = "11";
+
+  buildInfo = buildInfoLookup.${androidVersion};
+  buildInfoLookup = {
+    "16" = {
+      hash = "sha256-z+UTBGNWbofvxEnbhaAjh3iTDU1UmXDmCxpzXUSnJl0=";
+      variant = "eng";
+      extraProjects = [
+        "external/starlark-go"
+        "platform/build/release"
+      ];
+    };
+    "15" = {
+      hash = "sha256-chjqREDvDAvHEGQTg5+iOeASjJ1b49esS0JVgwZ3ugQ=";
+      variant = "eng";
+      extraProjects = [
+        "external/starlark-go"
+        "platform/prebuilts/bazel/common"
+        "platform/build/release"
+      ];
+    };
+    "14" = {
+      hash = "sha256-+G+/RQzOttl9oLrEIosFcV7+zmaEiiwBLmHVHSl6350=";
+      variant = "UP1A";
+      extraProjects = [
+        "external/starlark-go"
+        "platform/prebuilts/bazel/common"
+      ];
+    };
+    "13" = {
+      hash = "sha256-ihAYU/H122bBx0NwDsdfcmdS++K32qxd/G0y1q9GY38=";
+      variant = "TP1A";
+      extraProjects = [ "external/starlark-go" ];
+    };
+    "12" = {
+      hash = "sha256-z71Saqh6stiVB7ICvvM18GaA+E8tgcVFdFNs+uk71/4=";
+      variant = "SP1A";
+      extraProjects = [ "external/starlark-go" ];
+    };
+    "11" = {
+      hash = "sha256-SixtYTYaozENm2KCsNCY/qLZk8b9v5mDocrnVuKkHIY=";
+      variant = "RP1A";
+      extraProjects = [
+        "platform/prebuilts/vndk/v28"
+        "platform/prebuilts/vndk/v29"
+      ];
+    };
   };
 
   releaseConfig = if androidVersion == "11" then "eng" else "aosp_current";
-
-  variantLookup = {
-    "11" = "RP1A";
-    "12" = "SP1A";
-    "13" = "TP1A";
-    "14" = "UP1A";
-    "15" = "eng";
-    "16" = "eng";
-  };
-
-  projectsLookup = {
-    "16" = [
-      "external/starlark-go"
-      "platform/build/release"
-    ];
-    "15" = [
-      "external/starlark-go"
-      "platform/prebuilts/bazel/common"
-      "platform/build/release"
-    ];
-    "14" = [
-      "external/starlark-go"
-      "platform/prebuilts/bazel/common"
-    ];
-    "13" = [ "external/starlark-go" ];
-    "12" = [ "external/starlark-go" ];
-    "11" = [
-      "platform/prebuilts/vndk/v28"
-      "platform/prebuilts/vndk/v29"
-    ];
-  };
 
   archLookup = {
     "aarch64-linux" = "linux-arm64";
@@ -87,7 +95,7 @@ stdenv.mkDerivation {
   src = fetchWithRepo {
     manifestUrl = "https://android.googlesource.com/platform/manifest";
     manifestBranch = "android${androidVersion}-release";
-    outputHash = hashLookup.${androidVersion};
+    outputHash = buildInfo.hash;
     projects = [
       # Absolutely necessary for configuring.
       "platform/build"
@@ -98,7 +106,7 @@ stdenv.mkDerivation {
       # What we actually want to compile
       "platform/sdk"
     ]
-    ++ projectsLookup.${androidVersion};
+    ++ buildInfo.extraProjects;
   };
 
   patches = [
@@ -135,7 +143,7 @@ stdenv.mkDerivation {
 
   configurePhase = ''
     . build/envsetup.sh
-    lunch aosp_arm64-${releaseConfig}-${variantLookup.${androidVersion}}
+    lunch aosp_arm64-${releaseConfig}-${buildInfo.variant}
   '';
 
   buildPhase = ''
