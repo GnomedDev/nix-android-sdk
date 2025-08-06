@@ -112,6 +112,7 @@ stdenv.mkDerivation {
   patches = [
     ./patches/0001-add-arm-host-arch.patch
     ./patches/0002-add-arm-combo-mk.patch
+    ./patches/0003-remove-go-tests.patch
   ];
 
   postPatch = ''
