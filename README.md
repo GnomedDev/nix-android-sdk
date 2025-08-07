@@ -18,7 +18,7 @@ An attempt to build the Android SDK, specifically enough tools to compile a basi
 
 ## Status
 
-Android 11:
+Android 11-12:
 
 - [x] Download AOSP via repo
 - [x] `source envsetup.sh` completes without error
@@ -26,7 +26,7 @@ Android 11:
 - [ ] `make sdk` completes without error
 - [ ] A working toolchain is produced for compilation.
 
-Android 12-16:
+Android 13-16:
 
 - [x] Download AOSP via repo
 - [x] `source envsetup.sh` completes without error

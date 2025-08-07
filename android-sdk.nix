@@ -6,7 +6,8 @@
 }:
 
 let
-  androidVersion = "11";
+  androidVersion = "12";
+  androidVersionInt = lib.strings.toInt androidVersion;
 
   buildInfo = buildInfoLookup.${androidVersion};
   buildInfoLookup = {
@@ -41,9 +42,14 @@ let
       extraProjects = [ "external/starlark-go" ];
     };
     "12" = {
-      hash = "sha256-z71Saqh6stiVB7ICvvM18GaA+E8tgcVFdFNs+uk71/4=";
+      hash = "sha256-ePIYb0IW5VLxzfxqhKbacAAnQcmalFbyKUxa0IViVrs=";
       variant = "SP1A";
-      extraProjects = [ "external/starlark-go" ];
+      extraProjects = [
+        "external/starlark-go"
+        "platform/prebuilts/vndk/v28"
+        "platform/prebuilts/vndk/v29"
+        "platform/prebuilts/vndk/v30"
+      ];
     };
     "11" = {
       hash = "sha256-SixtYTYaozENm2KCsNCY/qLZk8b9v5mDocrnVuKkHIY=";
@@ -55,7 +61,7 @@ let
     };
   };
 
-  releaseConfig = if androidVersion == "11" then "eng" else "aosp_current";
+  releaseConfig = if androidVersionInt > 12 then "aosp_current" else "eng";
 
   archLookup = {
     "aarch64-linux" = "linux-arm64";
@@ -65,7 +71,7 @@ let
   };
 
   archFolder =
-    if lib.strings.toInt androidVersion > 15 then
+    if androidVersionInt > 15 then
       archLookup.${stdenv.buildPlatform.system}
     # Android before 16 has no support for aarch64-linux, so we need to put our builds in the `linux-x86` folder.
     else if lib.strings.hasSuffix "linux" stdenv.buildPlatform.system then
