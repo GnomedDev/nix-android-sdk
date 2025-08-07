@@ -6,7 +6,7 @@
 }:
 
 let
-  androidVersion = "12";
+  androidVersion = "13";
   androidVersionInt = lib.strings.toInt androidVersion;
 
   buildInfo = buildInfoLookup.${androidVersion};
@@ -118,7 +118,9 @@ stdenv.mkDerivation {
   patches = [
     ./patches/0001-add-arm-host-arch.patch
     ./patches/0002-add-arm-combo-mk.patch
-    ./patches/0003-remove-go-tests.patch
+  ]
+  ++ (if androidVersionInt < 13 then [ ./patches/0003-remove-go-tests.patch ] else [ ])
+  ++ [
     ./patches/0004-buildversion-add-arm-variant.patch
   ];
 
