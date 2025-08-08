@@ -1,0 +1,32 @@
+diff --git a/build/soong/cmd/path_interposer/main.go b/build/soong/cmd/path_interposer/main.go
+index a4fe3e4..2b69820 100644
+--- a/build/soong/cmd/path_interposer/main.go
++++ b/build/soong/cmd/path_interposer/main.go
+@@ -29,6 +29,7 @@ import (
+ )
+ 
+ func main() {
++	return
+ 	interposer, err := os.Executable()
+ 	if err != nil {
+ 		fmt.Fprintln(os.Stderr, "Unable to locate interposer executable:", err)
+diff --git a/build/soong/ui/build/path.go b/build/soong/ui/build/path.go
+index 86e61c0..3dd8e52 100644
+--- a/build/soong/ui/build/path.go
++++ b/build/soong/ui/build/path.go
+@@ -62,6 +62,7 @@ func parsePathDir(dir string) []string {
+ // wants the minimal performance overhead, and still get the benefits of $PATH
+ // hermeticity.
+ func SetupLitePath(ctx Context, config Config, tmpDir string) {
++	return
+ 	// Don't replace the path twice.
+ 	if config.pathReplaced {
+ 		return
+@@ -124,6 +125,7 @@ func SetupLitePath(ctx Context, config Config, tmpDir string) {
+ // and enables an incremental restriction of tools allowed in the $PATH without
+ // breaking existing use cases.
+ func SetupPath(ctx Context, config Config) {
++	return
+ 	// Don't replace $PATH twice.
+ 	if config.pathReplaced {
+ 		return

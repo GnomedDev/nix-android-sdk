@@ -6,7 +6,7 @@
 }:
 
 let
-  androidVersion = "13";
+  androidVersion = "12";
   androidVersionInt = lib.strings.toInt androidVersion;
 
   buildInfo = buildInfoLookup.${androidVersion};
@@ -122,6 +122,7 @@ stdenv.mkDerivation {
   ++ (if androidVersionInt < 13 then [ ./patches/0003-remove-go-tests.patch ] else [ ])
   ++ [
     ./patches/0004-buildversion-add-arm-variant.patch
+    ./patches/0005-disable-path-sandbox.patch
   ];
 
   postPatch = ''
@@ -131,9 +132,6 @@ stdenv.mkDerivation {
     substituteInPlace ./build/envsetup.sh --replace-fail /bin/pwd $(which pwd)
     substituteInPlace ./build/make/common/core.mk --replace-fail /bin/bash $(which bash)
     substituteInPlace ./build/core/product_config.mk --replace-fail "| sed" "| $(which sed)"
-    substituteInPlace ./build/soong/ui/build/path.go --replace-fail \
-      'ctx.Printf("Disallowed PATH tool %q used: %#v", log.Basename, log.Args)' \
-      'continue'
 
     if ((${androidVersion} > 13)); then
       substituteInPlace ./build/make/shell_utils.sh --replace-fail /bin/pwd $(which pwd)
@@ -160,7 +158,6 @@ stdenv.mkDerivation {
   '';
 
   buildPhase = ''
-    export TEMPORARY_DISABLE_PATH_RESTRICTIONS=1
     make sdk
   '';
 }
