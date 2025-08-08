@@ -133,6 +133,15 @@ stdenv.mkDerivation {
     substituteInPlace ./build/make/common/core.mk --replace-fail /bin/bash $(which bash)
     substituteInPlace ./build/core/product_config.mk --replace-fail "| sed" "| $(which sed)"
 
+    # I love starting `/bin/sh` with no env variables so I have to do this.
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail "mv -f" "$(which mv) -f"
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail dirname $(which dirname)
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail basename $(which basename)
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail "env -i" "$(which env) -i"
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail "cp \$in" "$(which cp) \$in"
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail "cp \$out" "$(which cp) \$out"
+    substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail "cmp --quiet" "$(which cmp) --quiet"
+
     if ((${androidVersion} > 13)); then
       substituteInPlace ./build/make/shell_utils.sh --replace-fail /bin/pwd $(which pwd)
     else
