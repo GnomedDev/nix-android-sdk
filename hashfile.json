@@ -1,0 +1,155 @@
+{
+    "platform/build": {
+        "16": "platform/build-16"
+    },
+    "build/blueprint": {
+        "16": "build/blueprint-16"
+    },
+    "build/soong": {
+        "16": "build/soong-16"
+    },
+    "external/golang-protobuf": {
+        "16": "external/golang-protobuf-16"
+    },
+    "external/apache-xml": {
+        "16": "external/apache-xml-16"
+    },
+    "external/conscrypt": {
+        "16": "external/conscrypt-16"
+    },
+    "external/llvm": {
+        "16": "external/llvm-16"
+    },
+    "external/protobuf": {
+        "16": "external/protobuf-16"
+    },
+    "external/skia": {
+        "16": "external/skia-16"
+    },
+    "external/okhttp": {
+        "16": "external/okhttp-16"
+    },
+    "kernel/configs": {
+        "16": "kernel/configs-16"
+    },
+    "platform/bionic": {
+        "16": "platform/bionic-16"
+    },
+    "platform/art": {
+        "16": "platform/art-16"
+    },
+    "platform/cts": {
+        "16": "platform/cts-16"
+    },
+    "platform/libcore": {
+        "16": "platform/libcore-16"
+    },
+    "platform/libnativehelper": {
+        "16": "platform/libnativehelper-16"
+    },
+    "platform/external/apache-harmony": {
+        "16": "platform/external/apache-harmony-16"
+    },
+    "platform/external/bouncycastle": {
+        "16": "platform/external/bouncycastle-16"
+    },
+    "platform/external/hamcrest": {
+        "16": "platform/external/hamcrest-16"
+    },
+    "platform/external/googletest": {
+        "16": "platform/external/googletest-16"
+    },
+    "platform/external/guava": {
+        "16": "platform/external/guava-16"
+    },
+    "platform/external/junit": {
+        "16": "platform/external/junit-16"
+    },
+    "platform/external/jsilver": {
+        "16": "platform/external/jsilver-16"
+    },
+    "platform/external/jsoncpp": {
+        "16": "platform/external/jsoncpp-16"
+    },
+    "platform/external/kotlinc": {
+        "16": "platform/external/kotlinc-16"
+    },
+    "platform/external/python/cpython3": {
+        "16": "platform/external/python/cpython3-16"
+    },
+    "platform/frameworks/av": {
+        "16": "platform/frameworks/av-16"
+    },
+    "platform/frameworks/base": {
+        "16": "platform/frameworks/base-16"
+    },
+    "platform/frameworks/native": {
+        "16": "platform/frameworks/native-16"
+    },
+    "platform/hardware/interfaces": {
+        "16": "platform/hardware/interfaces-16"
+    },
+    "platform/hardware/libhardware": {
+        "16": "platform/hardware/libhardware-16"
+    },
+    "platform/packages/modules/Connectivity": {
+        "16": "platform/packages/modules/Connectivity-16"
+    },
+    "platform/packages/modules/common": {
+        "16": "platform/packages/modules/common-16"
+    },
+    "platform/packages/modules/Wifi": {
+        "16": "platform/packages/modules/Wifi-16"
+    },
+    "platform/packages/modules/NetworkStack": {
+        "16": "platform/packages/modules/NetworkStack-16"
+    },
+    "platform/packages/modules/NeuralNetworks": {
+        "16": "platform/packages/modules/NeuralNetworks-16"
+    },
+    "platform/system/apex": {
+        "16": "platform/system/apex-16"
+    },
+    "platform/system/logging": {
+        "16": "platform/system/logging-16"
+    },
+    "platform/system/libvintf": {
+        "16": "platform/system/libvintf-16"
+    },
+    "platform/system/linkerconfig": {
+        "16": "platform/system/linkerconfig-16"
+    },
+    "platform/system/tools/aidl": {
+        "16": "platform/system/tools/aidl-16"
+    },
+    "platform/system/tools/hidl": {
+        "16": "platform/system/tools/hidl-16"
+    },
+    "platform/system/tools/xsdc": {
+        "16": "platform/system/tools/xsdc-16"
+    },
+    "platform/tools/apksig": {
+        "16": "platform/tools/apksig-16"
+    },
+    "platform/tools/tradefederation/prebuilts": {
+        "16": "platform/tools/tradefederation/prebuilts-16"
+    },
+    "platform/tools/metalava": {
+        "16": "platform/tools/metalava-16"
+    },
+    "platform/prebuilts/tools": {
+        "16": "platform/prebuilts/tools-16"
+    },
+    "platform/prebuilts/misc": {
+        "16": "platform/prebuilts/misc-16"
+    },
+    "platform/prebuilts/sdk": {
+        "16": "platform/prebuilts/sdk-16"
+    },
+    "platform/prebuilts/clang/host/linux-x86": {
+        "16": "platform/prebuilts/clang/host/linux-x86-16"
+    },
+    "platform/sdk": {
+        "16": "platform/sdk-16"
+    }
+}

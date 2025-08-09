@@ -12,7 +12,7 @@ let
   buildInfo = buildInfoLookup.${androidVersion};
   buildInfoLookup = {
     "16" = {
-      hash = "sha256-z+UTBGNWbofvxEnbhaAjh3iTDU1UmXDmCxpzXUSnJl0=";
+      hash = "";
       variant = "eng";
       extraProjects = [
         "external/starlark-go"
@@ -20,7 +20,7 @@ let
       ];
     };
     "15" = {
-      hash = "sha256-chjqREDvDAvHEGQTg5+iOeASjJ1b49esS0JVgwZ3ugQ=";
+      hash = "";
       variant = "eng";
       extraProjects = [
         "external/starlark-go"
@@ -29,7 +29,7 @@ let
       ];
     };
     "14" = {
-      hash = "sha256-+G+/RQzOttl9oLrEIosFcV7+zmaEiiwBLmHVHSl6350=";
+      hash = "";
       variant = "UP1A";
       extraProjects = [
         "external/starlark-go"
@@ -37,12 +37,12 @@ let
       ];
     };
     "13" = {
-      hash = "sha256-ihAYU/H122bBx0NwDsdfcmdS++K32qxd/G0y1q9GY38=";
+      hash = "";
       variant = "TP1A";
       extraProjects = [ "external/starlark-go" ];
     };
     "12" = {
-      hash = "sha256-ePIYb0IW5VLxzfxqhKbacAAnQcmalFbyKUxa0IViVrs=";
+      hash = "sha256-LBPcf/gqZFQejvSQchtP5v2iDTni5zU7fb+I50IdXb0=";
       variant = "SP1A";
       extraProjects = [
         "external/starlark-go"
@@ -52,7 +52,7 @@ let
       ];
     };
     "11" = {
-      hash = "sha256-SixtYTYaozENm2KCsNCY/qLZk8b9v5mDocrnVuKkHIY=";
+      hash = "";
       variant = "RP1A";
       extraProjects = [
         "platform/prebuilts/vndk/v28"
@@ -83,7 +83,7 @@ let
   goPkg = callPackage ./rebuilts/go.nix { };
   ninjaPkg = callPackage ./rebuilts/ninja.nix { };
 
-  fetchWithRepo = callPackage ./fetchWithRepo.nix { };
+  fetchWithRepo = callPackage ./fetchWithRepo { };
 in
 stdenv.mkDerivation {
   name = "androidsdk";
@@ -109,6 +109,56 @@ stdenv.mkDerivation {
       "build/soong"
       "external/golang-protobuf"
 
+      # Dependencies of the SDK
+      "external/apache-xml"
+      "external/conscrypt"
+      "external/llvm"
+      "external/protobuf"
+      "external/skia"
+      "external/okhttp"
+      "kernel/configs"
+      "platform/bionic"
+      "platform/art"
+      "platform/cts"
+      "platform/libcore"
+      "platform/libnativehelper"
+      "platform/external/apache-harmony"
+      "platform/external/bouncycastle"
+      "platform/external/hamcrest"
+      "platform/external/googletest"
+      "platform/external/guava"
+      "platform/external/junit"
+      "platform/external/jsilver"
+      "platform/external/jsoncpp"
+      "platform/external/kotlinc"
+      "platform/external/python/cpython3"
+      "platform/frameworks/av"
+      "platform/frameworks/base"
+      "platform/frameworks/native"
+      "platform/hardware/interfaces"
+      "platform/hardware/libhardware"
+      "platform/packages/modules/Connectivity"
+      "platform/packages/modules/common"
+      "platform/packages/modules/Wifi"
+      "platform/packages/modules/NetworkStack"
+      "platform/packages/modules/NeuralNetworks"
+      "platform/system/apex"
+      "platform/system/logging"
+      "platform/system/libvintf"
+      "platform/system/linkerconfig"
+      "platform/system/tools/aidl"
+      "platform/system/tools/hidl"
+      "platform/system/tools/xsdc"
+      "platform/tools/apksig"
+      "platform/tools/tradefederation/prebuilts"
+      "platform/tools/metalava"
+      # - Pulling in for the precompiled java deps that are hopefully cross-platform
+      "platform/prebuilts/tools"
+      "platform/prebuilts/misc"
+      "platform/prebuilts/sdk"
+      # - Need to get rid of these
+      "platform/prebuilts/clang/host/linux-x86"
+
       # What we actually want to compile
       "platform/sdk"
     ]
@@ -121,7 +171,6 @@ stdenv.mkDerivation {
   ]
   ++ (if androidVersionInt < 13 then [ ./patches/0003-remove-go-tests.patch ] else [ ])
   ++ [
-    ./patches/0004-buildversion-add-arm-variant.patch
     ./patches/0005-disable-path-sandbox.patch
   ];
 
@@ -132,6 +181,9 @@ stdenv.mkDerivation {
     substituteInPlace ./build/envsetup.sh --replace-fail /bin/pwd $(which pwd)
     substituteInPlace ./build/make/common/core.mk --replace-fail /bin/bash $(which bash)
     substituteInPlace ./build/core/product_config.mk --replace-fail "| sed" "| $(which sed)"
+
+    # I cannot find the `vts_proto_fuzzer_default` or `VtsHalDriverDefaults` defines.
+    substituteInPlace ./system/tools/hidl/build/hidl_interface.go --replace-fail "if shouldGenerateVts" "if false" 
 
     # I love starting `/bin/sh` with no env variables so I have to do this.
     substituteInPlace ./build/blueprint/bootstrap/bootstrap.go --replace-fail "mv -f" "$(which mv) -f"

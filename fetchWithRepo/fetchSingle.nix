@@ -2,13 +2,12 @@
   runCommand,
   pkgs,
   lib,
-}:
-{
+
   manifestUrl,
   manifestBranch,
   outputHash,
   outputHashAlgo ? "sha256",
-  projects,
+  project,
 }:
 runCommand "${lib.sources.urlToName manifestUrl}-${manifestBranch}"
   {
@@ -27,7 +26,7 @@ runCommand "${lib.sources.urlToName manifestUrl}-${manifestBranch}"
     cd $out
 
     repo init -u ${manifestUrl} -b ${manifestBranch} --depth 1
-    repo sync -c --fail-fast ${lib.concatStringsSep " " projects}
+    repo sync -c --fail-fast ${project}
 
     rm -rf .repo
   ''
